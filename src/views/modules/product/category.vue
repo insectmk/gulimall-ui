@@ -63,7 +63,7 @@ export default {
   data () {
     return {
       updateNodes: [],
-      maxLevel: 3,
+      maxLevel: 0,
       operation: 'save',
       dialogTitle: '提示内容',
       // 分类内容
@@ -91,7 +91,6 @@ export default {
   methods: {
     // 拖动节点后
     handleDrop (draggingNode, dropNode, dropType, ev) {
-      console.log('handleDrop: ', draggingNode, dropNode, dropType)
       // 1、当前节点最新的父节点id
       let pCid = 0
       let siblings = null
@@ -105,7 +104,6 @@ export default {
         pCid = dropNode.data.catId
         siblings = dropNode.childNodes
       }
-      this.pCid.push(pCid)
 
       // 2、当前拖拽节点的最新顺序，
       for (let i = 0; i < siblings.length; i++) {
@@ -130,6 +128,22 @@ export default {
       }
       // 3、当前拖拽节点的最新层级
       console.log('updateNodes', this.updateNodes)
+      this.$http({
+        url: this.$http.adornUrl('/product/category/update/sort'),
+        method: 'post',
+        data: this.$http.adornData(this.updateNodes, false)
+      }).then(({data}) => {
+        this.$message({
+          type: 'success',
+          message: '菜单顺序等修改成功!'
+        })
+        // 刷新菜单
+        this.getCategoriesTree()
+        // 设置默认展开的菜单
+        this.expandedKeys = [pCid]
+        this.updateNodes = []
+        this.maxLevel = 0
+      })
     },
     updateChildNodeLevel (node) {
       if (node.childNodes.length > 0) {
