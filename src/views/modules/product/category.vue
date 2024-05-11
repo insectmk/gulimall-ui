@@ -5,6 +5,8 @@
              show-checkbox
              node-key="catId"
              :default-expanded-keys="expandedKeys"
+             draggable
+             :allow-drop="allowDrop"
              :expand-on-click-node="false">
     <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ node.label }}</span>
@@ -32,7 +34,7 @@
         </span>
       </span>
     </el-tree>
-<!--分类表单框-->
+    <!--分类表单框-->
     <el-dialog :title="dialogTitle"
                :closeOnClickModal="false"
                :visible.sync="dialogFormVisible">
@@ -59,6 +61,7 @@
 export default {
   data () {
     return {
+      maxLevel: 3,
       operation: 'save',
       dialogTitle: '提示内容',
       // 分类内容
@@ -84,9 +87,31 @@ export default {
     }
   },
   methods: {
+    // 判断节点是否能被拖拽
+    allowDrop (draggingNode, dropNode, type) {
+      console.log('allowDrop', draggingNode, dropNode, type)
+      this.countNodeLevel(draggingNode.data)
+      let deep = this.maxLevel - draggingNode.data.catLevel + 1
+
+      if (type === 'inner') {
+        return (deep + dropNode.level) <= 3
+      } else {
+        return (deep + dropNode.parent.level) <= 3
+      }
+    },
+    // 计算节点深度
+    countNodeLevel (node) {
+      if (node.children != null && node.children.length > 0) {
+        for (let i = 0; i < node.children.length; i++) {
+          if (node.children[i].catLevel > this.maxLevel) {
+            this.maxLevel = node.children[i].catLevel
+          }
+          this.countNodeLevel(node.children[i])
+        }
+      }
+    },
     // 更新按钮点击
     update (node, data) {
-      console.log('update', node, data)
       this.operation = 'update'
       this.dialogTitle = '更新分类'
       // 查询分类信息
