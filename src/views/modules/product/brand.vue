@@ -133,7 +133,7 @@
 
         // 发送更新请求
         this.$http({
-          url: this.$http.adornUrl('/product/brand/update'),
+          url: this.$http.adornUrl('/product/brand/update/status'),
           method: 'post',
           data: this.$http.adornData({brandId, showStatus}, false)
         }).then(({data}) => {
