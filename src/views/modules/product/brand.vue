@@ -38,7 +38,10 @@
         prop="logo"
         header-align="center"
         align="center"
-        label="品牌logo地址">
+        label="品牌logo">
+        <template slot-scope="scope">
+          <img :src="scope.row.logo" alt="" style="width:100%;height:80px" />
+        </template>
       </el-table-column>
       <el-table-column
         prop="descript"
