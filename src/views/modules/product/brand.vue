@@ -10,13 +10,15 @@
           v-if="isAuth('product:brand:save')"
           type="primary"
           @click="addOrUpdateHandle()"
-        >新增</el-button>
+        >新增
+        </el-button>
         <el-button
           v-if="isAuth('product:brand:delete')"
           type="danger"
           @click="deleteHandle()"
           :disabled="dataListSelections.length <= 0"
-        >批量删除</el-button>
+        >批量删除
+        </el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -35,7 +37,7 @@
               style="width: 100px; height: 80px"
               :src="scope.row.logo"
           fit="fill"></el-image>-->
-          <img :src="scope.row.logo" style="width: 100px; height: 80px" />
+          <img :src="scope.row.logo" style="width: 100px; height: 80px"/>
         </template>
       </el-table-column>
       <el-table-column prop="descript" header-align="center" align="center" label="介绍"></el-table-column>
@@ -92,7 +94,8 @@
               type="text"
               size="small"
               @click="deleteCateRelationHandle(scope.row.id,scope.row.brandId)"
-            >移除</el-button>
+            >移除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -105,13 +108,14 @@
 </template>
 
 <script>
-import AddOrUpdate from "./brand-add-or-update";
-import CategoryCascader from "../common/category-cascader";
+import AddOrUpdate from './brand-add-or-update'
+import CategoryCascader from '../common/category-cascader'
+
 export default {
-  data() {
+  data () {
     return {
       dataForm: {
-        key: ""
+        key: ''
       },
       brandId: 0,
       catelogPath: [],
@@ -125,147 +129,150 @@ export default {
       addOrUpdateVisible: false,
       cateRelationDialogVisible: false,
       popCatelogSelectVisible: false
-    };
+    }
   },
   components: {
     AddOrUpdate,
     CategoryCascader
   },
-  activated() {
-    this.getDataList();
+  activated () {
+    this.getDataList()
   },
   methods: {
-    addCatelogSelect() {
-      //{"brandId":1,"catelogId":2}
-      this.popCatelogSelectVisible =false;
+    addCatelogSelect () {
+      // {"brandId":1,"catelogId":2}
+      this.popCatelogSelectVisible = false
       this.$http({
-        url: this.$http.adornUrl("/product/categorybrandrelation/save"),
-        method: "post",
-        data: this.$http.adornData({brandId:this.brandId,catelogId:this.catelogPath[this.catelogPath.length-1]}, false)
-      }).then(({ data }) => {
-        this.getCateRelation();
-      });
+        url: this.$http.adornUrl('/product/categorybrandrelation/save'),
+        method: 'post',
+        data: this.$http.adornData({
+          brandId: this.brandId,
+          catelogId: this.catelogPath[this.catelogPath.length - 1]
+        }, false)
+      }).then(({data}) => {
+        this.getCateRelation()
+      })
     },
-    deleteCateRelationHandle(id, brandId) {
+    deleteCateRelationHandle (id, brandId) {
       this.$http({
-        url: this.$http.adornUrl("/product/categorybrandrelation/delete"),
-        method: "post",
+        url: this.$http.adornUrl('/product/categorybrandrelation/delete'),
+        method: 'post',
         data: this.$http.adornData([id], false)
-      }).then(({ data }) => {
-        this.getCateRelation();
-      });
+      }).then(({data}) => {
+        this.getCateRelation()
+      })
     },
-    updateCatelogHandle(brandId) {
-      this.cateRelationDialogVisible = true;
-      this.brandId = brandId;
-      this.getCateRelation();
+    updateCatelogHandle (brandId) {
+      this.cateRelationDialogVisible = true
+      this.brandId = brandId
+      this.getCateRelation()
     },
-    getCateRelation() {
+    getCateRelation () {
       this.$http({
-        url: this.$http.adornUrl("/product/categorybrandrelation/catelog/list"),
-        method: "get",
+        url: this.$http.adornUrl('/product/categorybrandrelation/catelog/list'),
+        method: 'get',
         params: this.$http.adornParams({
           brandId: this.brandId
         })
-      }).then(({ data }) => {
-        this.cateRelationTableData = data.data;
-      });
+      }).then(({data}) => {
+        this.cateRelationTableData = data.data
+      })
     },
     // 获取数据列表
-    getDataList() {
-      this.dataListLoading = true;
+    getDataList () {
+      this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl("/product/brand/list"),
-        method: "get",
+        url: this.$http.adornUrl('/product/brand/list'),
+        method: 'get',
         params: this.$http.adornParams({
           page: this.pageIndex,
           limit: this.pageSize,
           key: this.dataForm.key
         })
-      }).then(({ data }) => {
+      }).then(({data}) => {
         if (data && data.code === 0) {
-          this.dataList = data.page.list;
-          this.totalPage = data.page.totalCount;
+          this.dataList = data.page.list
+          this.totalPage = data.page.totalCount
         } else {
-          this.dataList = [];
-          this.totalPage = 0;
+          this.dataList = []
+          this.totalPage = 0
         }
-        this.dataListLoading = false;
-      });
+        this.dataListLoading = false
+      })
     },
-    updateBrandStatus(data) {
-      console.log("最新信息", data);
-      let { brandId, showStatus } = data;
-      //发送请求修改状态
+    updateBrandStatus (data) {
+      console.log('最新信息', data)
+      let {brandId, showStatus} = data
+      // 发送请求修改状态
       this.$http({
-        url: this.$http.adornUrl("/product/brand/update/status"),
-        method: "post",
-        data: this.$http.adornData({ brandId, showStatus }, false)
-      }).then(({ data }) => {
+        url: this.$http.adornUrl('/product/brand/update/status'),
+        method: 'post',
+        data: this.$http.adornData({brandId, showStatus}, false)
+      }).then(({data}) => {
         this.$message({
-          type: "success",
-          message: "状态更新成功"
-        });
-      });
+          type: 'success',
+          message: '状态更新成功'
+        })
+      })
     },
     // 每页数
-    sizeChangeHandle(val) {
-      this.pageSize = val;
-      this.pageIndex = 1;
-      this.getDataList();
+    sizeChangeHandle (val) {
+      this.pageSize = val
+      this.pageIndex = 1
+      this.getDataList()
     },
     // 当前页
-    currentChangeHandle(val) {
-      this.pageIndex = val;
-      this.getDataList();
+    currentChangeHandle (val) {
+      this.pageIndex = val
+      this.getDataList()
     },
     // 多选
-    selectionChangeHandle(val) {
-      this.dataListSelections = val;
+    selectionChangeHandle (val) {
+      this.dataListSelections = val
     },
     // 新增 / 修改
-    addOrUpdateHandle(id) {
-      this.addOrUpdateVisible = true;
+    addOrUpdateHandle (id) {
+      this.addOrUpdateVisible = true
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id);
-      });
+        this.$refs.addOrUpdate.init(id)
+      })
     },
     // 删除
-    deleteHandle(id) {
+    deleteHandle (id) {
       var ids = id
         ? [id]
         : this.dataListSelections.map(item => {
-            return item.brandId;
-          });
+          return item.brandId
+        })
       this.$confirm(
-        `确定对[id=${ids.join(",")}]进行[${id ? "删除" : "批量删除"}]操作?`,
-        "提示",
+        `确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`,
+        '提示',
         {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         }
       ).then(() => {
         this.$http({
-          url: this.$http.adornUrl("/product/brand/delete"),
-          method: "post",
+          url: this.$http.adornUrl('/product/brand/delete'),
+          method: 'post',
           data: this.$http.adornData(ids, false)
-        }).then(({ data }) => {
+        }).then(({data}) => {
           if (data && data.code === 0) {
             this.$message({
-              message: "操作成功",
-              type: "success",
+              message: '操作成功',
+              type: 'success',
               duration: 1500,
               onClose: () => {
-                this.getDataList();
+                this.getDataList()
               }
-            });
+            })
           } else {
-            this.$message.error(data.msg);
+            this.$message.error(data.msg)
           }
-        });
-      });
+        })
+      })
     }
   }
-};
+}
 </script>

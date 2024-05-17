@@ -9,7 +9,8 @@
           <brand-select style="width:160px"></brand-select>
         </el-form-item>
         <el-form-item label="价格">
-          <el-input-number style="width:160px" v-model="dataForm.price.min" :min="0"></el-input-number>-
+          <el-input-number style="width:160px" v-model="dataForm.price.min" :min="0"></el-input-number>
+          -
           <el-input-number style="width:160px" v-model="dataForm.price.max" :min="0"></el-input-number>
         </el-form-item>
         <el-form-item label="检索">
@@ -30,18 +31,18 @@
     >
       <el-table-column type="expand">
         <template slot-scope="scope">
-          商品标题：{{scope.row.skuTitle}}
-          <br />
-          商品副标题：{{scope.row.skuSubtitle}}
-          <br />
-          商品描述：{{scope.row.skuDesc}}
-          <br />
-          分类ID：{{scope.row.catalogId}}
-          <br />
-          SpuID：{{scope.row.spuId}}
-          <br />
-          品牌ID：{{scope.row.brandId}}
-          <br />
+          商品标题：{{ scope.row.skuTitle }}
+          <br/>
+          商品副标题：{{ scope.row.skuSubtitle }}
+          <br/>
+          商品描述：{{ scope.row.skuDesc }}
+          <br/>
+          分类ID：{{ scope.row.catalogId }}
+          <br/>
+          SpuID：{{ scope.row.spuId }}
+          <br/>
+          品牌ID：{{ scope.row.brandId }}
+          <br/>
         </template>
       </el-table-column>
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
@@ -49,7 +50,7 @@
       <el-table-column prop="skuName" header-align="center" align="center" label="名称"></el-table-column>
       <el-table-column prop="skuDefaultImg" header-align="center" align="center" label="默认图片">
         <template slot-scope="scope">
-          <img :src="scope.row.skuDefaultImg" style="width:80px;height:80px;" />
+          <img :src="scope.row.skuDefaultImg" style="width:80px;height:80px;"/>
         </template>
       </el-table-column>
       <el-table-column prop="price" header-align="center" align="center" label="价格"></el-table-column>
@@ -91,15 +92,16 @@
 </template>
 
 <script>
-import CategoryCascader from "../common/category-cascader";
-import BrandSelect from "../common/brand-select";
+import CategoryCascader from '../common/category-cascader'
+import BrandSelect from '../common/brand-select'
+
 export default {
-  data() {
+  data () {
     return {
       catPathSub: null,
       brandIdSub: null,
       dataForm: {
-        key: "",
+        key: '',
         brandId: 0,
         catelogId: 0,
         price: {
@@ -115,36 +117,36 @@ export default {
       dataListSelections: [],
       addOrUpdateVisible: false,
       catelogPath: []
-    };
+    }
   },
   components: {
     CategoryCascader,
     BrandSelect
   },
-  activated() {
-    this.getDataList();
+  activated () {
+    this.getDataList()
   },
   methods: {
-    getSkuDetails(row, expand) {
-      //sku详情查询
-      console.log("展开某行...", row, expand);
+    getSkuDetails (row, expand) {
+      // sku详情查询
+      console.log('展开某行...', row, expand)
     },
-    //处理更多指令
-    handleCommand(row, command) {
-      console.log("~~~~~", row, command);
-      if ("stockSettings" == command) {
-        this.$router.push({ path: "/ware-sku", query: { skuId: row.skuId } });
+    // 处理更多指令
+    handleCommand (row, command) {
+      console.log('~~~~~', row, command)
+      if (command === 'stockSettings') {
+        this.$router.push({path: '/ware-sku', query: {skuId: row.skuId}})
       }
     },
-    searchSkuInfo() {
-      this.getDataList();
+    searchSkuInfo () {
+      this.getDataList()
     },
     // 获取数据列表
-    getDataList() {
-      this.dataListLoading = true;
+    getDataList () {
+      this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl("/product/skuinfo/list"),
-        method: "get",
+        url: this.$http.adornUrl('/product/skuinfo/list'),
+        method: 'get',
         params: this.$http.adornParams({
           page: this.pageIndex,
           limit: this.pageSize,
@@ -154,44 +156,44 @@ export default {
           min: this.dataForm.price.min,
           max: this.dataForm.price.max
         })
-      }).then(({ data }) => {
+      }).then(({data}) => {
         if (data && data.code === 0) {
-          this.dataList = data.page.list;
-          this.totalPage = data.page.totalCount;
+          this.dataList = data.page.list
+          this.totalPage = data.page.totalCount
         } else {
-          this.dataList = [];
-          this.totalPage = 0;
+          this.dataList = []
+          this.totalPage = 0
         }
-        this.dataListLoading = false;
-      });
+        this.dataListLoading = false
+      })
     },
     // 每页数
-    sizeChangeHandle(val) {
-      this.pageSize = val;
-      this.pageIndex = 1;
-      this.getDataList();
+    sizeChangeHandle (val) {
+      this.pageSize = val
+      this.pageIndex = 1
+      this.getDataList()
     },
     // 当前页
-    currentChangeHandle(val) {
-      this.pageIndex = val;
-      this.getDataList();
+    currentChangeHandle (val) {
+      this.pageIndex = val
+      this.getDataList()
     },
     // 多选
-    selectionChangeHandle(val) {
-      this.dataListSelections = val;
+    selectionChangeHandle (val) {
+      this.dataListSelections = val
     }
   },
-  mounted() {
-    this.catPathSub = PubSub.subscribe("catPath", (msg, val) => {
-      this.dataForm.catelogId = val[val.length - 1];
-    });
-    this.brandIdSub = PubSub.subscribe("brandId", (msg, val) => {
-      this.dataForm.brandId = val;
-    });
+  mounted () {
+    this.catPathSub = PubSub.subscribe('catPath', (msg, val) => {
+      this.dataForm.catelogId = val[val.length - 1]
+    })
+    this.brandIdSub = PubSub.subscribe('brandId', (msg, val) => {
+      this.dataForm.brandId = val
+    })
   },
-  beforeDestroy() {
-    PubSub.unsubscribe(this.catPathSub);
-    PubSub.unsubscribe(this.brandIdSub);
-  } //生命周期 - 销毁之前
-};
+  beforeDestroy () {
+    PubSub.unsubscribe(this.catPathSub)
+    PubSub.unsubscribe(this.brandIdSub)
+  }
+}
 </script>
