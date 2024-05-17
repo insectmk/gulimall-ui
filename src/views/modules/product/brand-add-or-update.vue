@@ -94,7 +94,8 @@ export default {
                 callback()
               }
             },
-            trigger: 'blur'}
+            trigger: 'blur'
+          }
         ]
       }
     }
